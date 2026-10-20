@@ -1,0 +1,306 @@
+{
+  "info": {
+    "name": "Sales Analytics Platform",
+    "description": "Collection complete de l'API (auth, datasets, analyses, admin, fonctionnalites avancees). Importer aussi l'environnement 'Sales Analytics - Local'. Lancer 'Login' une fois : le token est capture automatiquement et reutilise par toutes les autres requetes.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "auth": {
+    "type": "bearer",
+    "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }]
+  },
+  "item": [
+    {
+      "name": "Health",
+      "item": [
+        {
+          "name": "Health check",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{baseUrl}}/health", "host": ["{{baseUrl}}"], "path": ["health"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Register",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/auth/register", "host": ["{{baseUrl}}"], "path": ["auth", "register"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"fullName\": \"Nouvel Utilisateur\",\n  \"email\": \"nouveau@test.com\",\n  \"password\": \"password123\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const data = pm.response.json();",
+                  "if (data.token) {",
+                  "  pm.environment.set('token', data.token);",
+                  "  pm.test('Token recupere et sauvegarde', () => pm.expect(data.token).to.be.a('string'));",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/auth/login", "host": ["{{baseUrl}}"], "path": ["auth", "login"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"ilham@test.com\",\n  \"password\": \"password123\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Mon profil (me)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{baseUrl}}/auth/me", "host": ["{{baseUrl}}"], "path": ["auth", "me"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Datasets",
+      "item": [
+        {
+          "name": "Lister mes datasets",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{baseUrl}}/datasets", "host": ["{{baseUrl}}"], "path": ["datasets"] }
+          }
+        },
+        {
+          "name": "Importer un dataset (CSV)",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": { "raw": "{{baseUrl}}/datasets", "host": ["{{baseUrl}}"], "path": ["datasets"] },
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                { "key": "title", "value": "Mon dataset de test", "type": "text" },
+                { "key": "description", "value": "Importe via Postman", "type": "text" },
+                { "key": "category", "value": "Ventes", "type": "text" },
+                { "key": "source", "value": "Postman", "type": "text" },
+                { "key": "file", "type": "file", "src": "" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Stats d'un dataset (exploration)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{baseUrl}}/datasets/{{datasetId}}", "host": ["{{baseUrl}}"], "path": ["datasets", "{{datasetId}}"] }
+          }
+        },
+        {
+          "name": "Lignes du dataset (tableau, recherche/filtre/tri/pagination)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/datasets/{{datasetId}}/records?page=1&limit=20&sortBy=sales&sortDir=desc",
+              "host": ["{{baseUrl}}"],
+              "path": ["datasets", "{{datasetId}}", "records"],
+              "query": [
+                { "key": "page", "value": "1" },
+                { "key": "limit", "value": "20" },
+                { "key": "sortBy", "value": "sales" },
+                { "key": "sortDir", "value": "desc" },
+                { "key": "q", "value": "", "disabled": true },
+                { "key": "category", "value": "", "disabled": true },
+                { "key": "region", "value": "", "disabled": true }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Analyse - resume (KPI)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{baseUrl}}/datasets/{{datasetId}}/analysis/summary", "host": ["{{baseUrl}}"], "path": ["datasets", "{{datasetId}}", "analysis", "summary"] }
+          }
+        },
+        {
+          "name": "Analyse - agregation par groupe",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/datasets/{{datasetId}}/analysis/aggregate?groupBy=region&metric=sales&agg=sum",
+              "host": ["{{baseUrl}}"],
+              "path": ["datasets", "{{datasetId}}", "analysis", "aggregate"],
+              "query": [
+                { "key": "groupBy", "value": "region" },
+                { "key": "metric", "value": "sales" },
+                { "key": "agg", "value": "sum" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Analyse - evolution temporelle",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/datasets/{{datasetId}}/analysis/timeseries?metric=sales&agg=sum",
+              "host": ["{{baseUrl}}"],
+              "path": ["datasets", "{{datasetId}}", "analysis", "timeseries"],
+              "query": [
+                { "key": "metric", "value": "sales" },
+                { "key": "agg", "value": "sum" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Avance - detection d'outliers (IQR)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/datasets/{{datasetId}}/insights/outliers?column=profit",
+              "host": ["{{baseUrl}}"],
+              "path": ["datasets", "{{datasetId}}", "insights", "outliers"],
+              "query": [{ "key": "column", "value": "profit" }]
+            }
+          }
+        },
+        {
+          "name": "Avance - correlation (Pearson)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/datasets/{{datasetId}}/insights/correlation?x=discount&y=profit",
+              "host": ["{{baseUrl}}"],
+              "path": ["datasets", "{{datasetId}}", "insights", "correlation"],
+              "query": [
+                { "key": "x", "value": "discount" },
+                { "key": "y", "value": "profit" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Avance - score de qualite des donnees",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{baseUrl}}/datasets/{{datasetId}}/insights/quality", "host": ["{{baseUrl}}"], "path": ["datasets", "{{datasetId}}", "insights", "quality"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Analyses sauvegardees",
+      "item": [
+        {
+          "name": "Dashboards publics (visiteur, sans auth)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "auth": { "type": "noauth" },
+            "url": { "raw": "{{baseUrl}}/analyses/public", "host": ["{{baseUrl}}"], "path": ["analyses", "public"] }
+          }
+        },
+        {
+          "name": "Mes analyses sauvegardees",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{baseUrl}}/analyses", "host": ["{{baseUrl}}"], "path": ["analyses"] }
+          }
+        },
+        {
+          "name": "Sauvegarder une analyse",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/analyses", "host": ["{{baseUrl}}"], "path": ["analyses"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"datasetId\": {{datasetId}},\n  \"title\": \"Ventes par region\",\n  \"config\": { \"groupBy\": \"region\", \"metric\": \"sales\" },\n  \"isPublic\": false\n}"
+            }
+          }
+        },
+        {
+          "name": "Voir une analyse",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{baseUrl}}/analyses/{{analysisId}}", "host": ["{{baseUrl}}"], "path": ["analyses", "{{analysisId}}"] }
+          }
+        },
+        {
+          "name": "Supprimer une analyse",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": { "raw": "{{baseUrl}}/analyses/{{analysisId}}", "host": ["{{baseUrl}}"], "path": ["analyses", "{{analysisId}}"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Admin",
+      "item": [
+        {
+          "name": "Lister les utilisateurs",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{baseUrl}}/admin/users", "host": ["{{baseUrl}}"], "path": ["admin", "users"] }
+          }
+        },
+        {
+          "name": "Changer le role d'un utilisateur",
+          "request": {
+            "method": "PATCH",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/admin/users/{{userId}}/role", "host": ["{{baseUrl}}"], "path": ["admin", "users", "{{userId}}", "role"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"role\": \"admin\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Superviser tous les datasets",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{baseUrl}}/admin/datasets", "host": ["{{baseUrl}}"], "path": ["admin", "datasets"] }
+          }
+        },
+        {
+          "name": "Indicateurs globaux de la plateforme",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{baseUrl}}/admin/stats", "host": ["{{baseUrl}}"], "path": ["admin", "stats"] }
+          }
+        }
+      ]
+    }
+  ]
+}

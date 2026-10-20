@@ -50,6 +50,14 @@ Trois jeux de données sont fournis dans `server/db/seeds/` :
 
 Crée un compte sur la plateforme, puis importe `sample-superstore.csv` depuis la page "Mes datasets".
 
+## Documentation de l'API (Postman)
+
+Une collection Postman complète est fournie dans `postman/` :
+- `SalesAnalyticsPlatform.postman_collection.json` — toutes les routes (auth, datasets, analyses, admin, fonctionnalités avancées)
+- `local.postman_environment.json` — variables préconfigurées (`baseUrl`, `datasetId`...)
+
+**Pour l'utiliser** : dans Postman, importe les deux fichiers, sélectionne l'environnement "Sales Analytics - Local", puis lance la requête **Auth → Login** une fois — le token JWT est automatiquement récupéré et réutilisé par toutes les autres requêtes (script de test intégré).
+
 ## Comptes de test existants
 
 | Email | Mot de passe | Rôle |
@@ -68,8 +76,10 @@ Crée un compte sur la plateforme, puis importe `sample-superstore.csv` depuis l
 - [x] Analyses sauvegardées (privées ou publiques)
 - [x] Dashboards publics consultables **sans connexion** (visiteur)
 - [x] Espace admin : liste des utilisateurs, changement de rôle, supervision des datasets, indicateurs globaux
-- [ ] Fonctionnalités avancées (détection d'outliers, corrélation, score de qualité des données) — à faire
+- [x] 3 fonctionnalités avancées : détection de valeurs aberrantes (IQR), analyse de corrélation (Pearson), score de qualité des données
+- [x] Documentation de l'API (collection Postman, voir `postman/`)
 - [ ] Import flexible multi-format CSV (Global Superstore, Online Retail) — à faire
+- [ ] Document d'architecture dédié + slides de présentation — à faire
 
 ## Architecture
 
