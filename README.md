@@ -98,3 +98,4 @@ sales-analytics-platform/
 - Le port Postgres est **5433** (pas le défaut 5432) pour éviter les conflits avec d'autres projets sur la même machine.
 - Chaque dataset est isolé par utilisateur (`owner_id`) — un dataset n'est visible par un autre utilisateur que si une de ses analyses est marquée publique.
 - `server/.env.example` et `client/.env` donnent la config par défaut ; adapte `DATABASE_URL` si ton port Postgres diffère.
+
