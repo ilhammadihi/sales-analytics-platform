@@ -3,6 +3,7 @@ import multer from 'multer';
 import { listDatasets, uploadDataset } from '../controllers/datasetController.js';
 import { getDatasetStats, listRecords } from '../controllers/explorationController.js';
 import { aggregateByGroup, summary, timeseries } from '../controllers/analysisController.js';
+import { detectOutliers, getCorrelation, getQualityScore } from '../controllers/insightsController.js';
 import { optionalAuth, requireAuth } from '../middleware/auth.js';
 import { loadDataset } from '../middleware/loadDataset.js';
 
@@ -21,3 +22,8 @@ datasetRoutes.get('/:id/records', optionalAuth, loadDataset, listRecords);
 datasetRoutes.get('/:id/analysis/summary', optionalAuth, loadDataset, summary);
 datasetRoutes.get('/:id/analysis/aggregate', optionalAuth, loadDataset, aggregateByGroup);
 datasetRoutes.get('/:id/analysis/timeseries', optionalAuth, loadDataset, timeseries);
+
+// Fonctionnalités avancées (CdC section 9)
+datasetRoutes.get('/:id/insights/outliers', optionalAuth, loadDataset, detectOutliers);
+datasetRoutes.get('/:id/insights/correlation', optionalAuth, loadDataset, getCorrelation);
+datasetRoutes.get('/:id/insights/quality', optionalAuth, loadDataset, getQualityScore);

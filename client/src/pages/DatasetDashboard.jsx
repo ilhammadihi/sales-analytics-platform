@@ -8,6 +8,7 @@ import {
 import { getAggregate, getSummary, getTimeseries } from '../api/datasets.js';
 import { saveAnalysis } from '../api/analyses.js';
 import { useAuth } from '../context/AuthContext.jsx';
+import { AdvancedInsights } from '../components/AdvancedInsights.jsx';
 
 const COLORS = ['#6366f1', '#f59e0b', '#ef4444', '#14b8a6', '#22c55e', '#a855f7'];
 const GROUP_OPTIONS = ['region', 'country', 'category', 'sub_category', 'customer_segment'];
@@ -180,6 +181,8 @@ export function DatasetDashboard() {
           </ResponsiveContainer>
         </ChartCard>
       </div>
+
+      <AdvancedInsights datasetId={id} />
     </div>
   );
 }
